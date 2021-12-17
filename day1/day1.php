@@ -19,7 +19,6 @@ $inputs = [
 ];
 
 foreach($inputs as $key => $input) {
-
     $explode = array_map('intval', array_map('trim', explode("\n", str_replace("\r\n", "\n", $input))));
     $prev = null;
     $increments = 0;

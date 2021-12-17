@@ -58,7 +58,7 @@ foreach($inputs as $key => $input) {
     $explode = array_filter(array_map('trim', explode("\n", str_replace("\r\n", "\n", $input))));
 
     for($i = 0; $i < strlen($explode[0]); $i++) {
-        $values = array_map(static function (string $item) use ($i) {
+        $values = array_map(static function(string $item) use ($i) {
             return $item[$i];
         }, $explode);
 

@@ -36,8 +36,8 @@ $example = <<<TXT
 TXT;
 
 $inputs = [
-    'example'             => $example,
-    'actual'              => file_get_contents(__DIR__ . '/day4-input.txt'),
+    'example' => $example,
+    'actual'  => file_get_contents(__DIR__ . '/day4-input.txt'),
 ];
 
 $checkIsBoardWinner = static function(string $board): string {
@@ -110,13 +110,12 @@ foreach($inputs as $key => $input) {
                 $finalBoardWon = $board;
                 $finalNumber = $number;
                 $finalBoardWonId = $id;
-                $boardNumber = $id+1;
-                $numbersDrawn = $numbersDrawnIndex+1;
+                $boardNumber = $id + 1;
+                $numbersDrawn = $numbersDrawnIndex + 1;
                 echo "Board {$boardNumber} won with number {$number} (after {$numbersDrawnIndex} numbers), skipping...\n";
             }
         }
     }
-
 
     echo str_pad("{$key}: ", 30) . ($calculateBoardScore($finalNumber, $finalBoardWon)) . "\n";
 }

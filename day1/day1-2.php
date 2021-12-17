@@ -25,11 +25,11 @@ foreach($inputs as $name => $input) {
     $increments = 0;
     foreach($explode as $key => $currentValue) {
         $value = $currentValue;
-        if(isset($explode[$key+1])) {
-            $value += $explode[$key+1];
+        if(isset($explode[$key + 1])) {
+            $value += $explode[$key + 1];
         }
-        if(isset($explode[$key+2])) {
-            $value += $explode[$key+2];
+        if(isset($explode[$key + 2])) {
+            $value += $explode[$key + 2];
         }
         if(null !== $prev && $value > $prev) {
             $increments++;

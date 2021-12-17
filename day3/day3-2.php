@@ -51,12 +51,12 @@ $binaryToDecimal = function(string $binary): int {
     return bindec($binary);
 };
 
-$calculateValues = static function (array $data) {
+$calculateValues = static function(array $data) {
     $gamma = '';
     $epsilon = '';
 
     for($i = 0; $i < strlen($data[0]); $i++) {
-        $values = array_map(static function (string $item) use ($i) {
+        $values = array_map(static function(string $item) use ($i) {
             return $item[$i];
         }, $data);
 
@@ -80,9 +80,7 @@ foreach($inputs as $key => $input) {
 
     $explode = array_filter(array_map('trim', explode("\n", str_replace("\r\n", "\n", $input))));
 
-
     [$gamma, $epsilon] = $calculateValues($explode);
-
 
     echo str_pad("{$key}: ", 30) . ($binaryToDecimal($gamma) * $binaryToDecimal($epsilon)) . "\n";
 }
