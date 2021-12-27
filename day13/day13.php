@@ -125,6 +125,105 @@ TXT
 TXT
             ,
         ],
+        [
+            'y'        => 11,
+            'length'   => 11,
+            'input'    => <<<TXT
+...#..#..#.
+....#......
+...........
+#..........
+...#....#.#
+...........
+...........
+...........
+...........
+...........
+.#....#.##.
+....#......
+......#...#
+#..........
+#.#........
+TXT
+            ,
+            'foldline' => <<<TXT
+...#..#..#.
+....#......
+...........
+#..........
+...#....#.#
+...........
+...........
+...........
+...........
+...........
+.#....#.##.
+-----------
+......#...#
+#..........
+#.#........
+TXT
+            ,
+            'folded'   => <<<TXT
+...#..#..#.
+....#......
+...........
+#..........
+...#....#.#
+...........
+...........
+...........
+#.#........
+#..........
+.#....#.###
+TXT
+            ,
+        ],
+        [
+            'y'        => 2,
+            'length'   => 11,
+            'input'    => <<<TXT
+...#..#..#.
+....#......
+...........
+#..........
+...#....#.#
+...........
+...........
+...........
+...........
+...........
+.#....#.##.
+....#......
+......#...#
+#..........
+#.#........
+TXT
+            ,
+            'foldline' => <<<TXT
+...#..#..#.
+....#......
+-----------
+#..........
+...#....#.#
+...........
+...........
+...........
+...........
+...........
+.#....#.##.
+....#......
+......#...#
+#..........
+#.#........
+TXT
+            ,
+            'folded'   => <<<TXT
+...#..#.###
+#...#......
+TXT
+            ,
+        ],
     ];
 
     foreach($input as $item) {
@@ -213,6 +312,74 @@ TXT
 TXT
             ,
         ],
+        [
+            'x'        => 8,
+            'length'   => 11,
+            'input'    => <<<TXT
+#.##..#..#.
+#...#......
+......#...#
+#...#......
+.#.#..#.###
+...........
+...........
+TXT
+            ,
+            'foldline' => <<<TXT
+#.##..#.|#.
+#...#...|..
+......#.|.#
+#...#...|..
+.#.#..#.|##
+........|..
+........|..
+TXT
+            ,
+            'folded'   => <<<TXT
+#.##..##
+#...#...
+......#.
+#...#...
+.#.#..##
+........
+........
+TXT
+            ,
+        ],
+        [
+            'x'        => 2,
+            'length'   => 11,
+            'input'    => <<<TXT
+#.##..#..#.
+#...#......
+......#...#
+#...#......
+.#.#..#.###
+...........
+...........
+TXT
+            ,
+            'foldline' => <<<TXT
+#.|#..#..#.
+#.|.#......
+..|...#...#
+#.|.#......
+.#|#..#.###
+..|........
+..|........
+TXT
+            ,
+            'folded'   => <<<TXT
+##
+#.
+..
+#.
+.#
+..
+..
+TXT
+            ,
+        ],
     ];
 
     foreach($input as $item) {
@@ -246,18 +413,38 @@ function foldHorizontal(string $sheet, int $y, int $length, bool $returnFoldline
     $halves = explode(str_repeat('-', $length), $sheet);
     $sheet = $halves[0];
 
-    $bottomHalf = implode('', array_reverse(str_split($halves[1], $length)));
-    for($i = 0; $i < strlen($bottomHalf); $i++) {
-        if($bottomHalf[$i] !== '#') {
-            continue;
+    $bottomHalf = $halves[1];
+
+    // 01234
+    // 56789
+    // ab#de
+    // -----
+    // .#...
+    // ...#.
+
+    // bottomHalf length = 10
+    // 0 -> a (-(length))
+    // 1 -> b (-length+1)
+    // 2 -> c (-length+2)
+    // ...
+    // 5 -> 5 (-(length * 2)+0)
+    // 6 -> 6 (-(length * 2)+1)
+    foreach(str_split($bottomHalf, $length) as $rowIndex => $row) {
+        $rowPosition = -(($rowIndex + 1) * (strlen($row)));
+        for($i = 0; $i < strlen($row); $i++) {
+            if($row[$i] === '#' && isset($sheet[$rowPosition + $i])) {
+                $sheet[$rowPosition + $i] = '#';
+            }
         }
-        $sheet[$i] = '#';
     }
 
     return $sheet;
 }
 
-function foldVertical(string $sheet, int $x, int $length, bool $returnFoldline = false): string {
+/**
+ * Note that $length is passed by reference, as the sheet will get cut
+ */
+function foldVertical(string $sheet, int $x, int &$length, bool $returnFoldline = false): string {
     // Fold line is to overwrite the line FOLLOWING x
     for($i = $x; $i <= strlen($sheet); $i += $length) {
         $sheet[$i] = '|';
@@ -266,7 +453,6 @@ function foldVertical(string $sheet, int $x, int $length, bool $returnFoldline =
         return $sheet;
     }
 
-//    echo chunk_split($sheet, $length) . "\n\n";
     $newSheet = [];
     foreach(str_split($sheet, $length) as $row) {
         $explode = explode('|', $row);
@@ -274,18 +460,19 @@ function foldVertical(string $sheet, int $x, int $length, bool $returnFoldline =
         if(!isset($explode[1])) {
             continue;
         }
-        $right = strrev($explode[1]);
+        $leftLength = strlen($left);
+        $right = $explode[1];
         for($i = strlen($left) - 1; $i >= 0; $i--) {
             if(isset($right[$i]) && $right[$i] === '#') {
-                $left[$i] = '#';
+                $left[$leftLength - 1 - $i] = '#';
             }
         }
         $newSheet[] = $left;
     }
 
-    $newSheet = implode('', $newSheet);
+    $length = $x;
 
-    return $newSheet;
+    return implode('', $newSheet);
 }
 
 foreach($inputs as $key => $input) {
@@ -308,7 +495,7 @@ foreach($inputs as $key => $input) {
     $length = max($xCoordinates) + 1;
     $height = max($yCoordinates) + 1;
 
-    echo "Sheet is to be {$length} (x) by {$height} (y):\n";
+    echo "Sheet is to be {$length} (x) by {$height} (y)\n";
 
     $sheet = str_repeat(str_repeat('.', $length), $height);
 
@@ -333,4 +520,6 @@ foreach($inputs as $key => $input) {
         echo str_pad("{$key}: after {$countFolds} fold(s):", 36) . substr_count($sheet, '#') . " ({$fold})\n";
         $countFolds++;
     }
+
+    echo str_replace('.', ' ', chunk_split($sheet, $length));
 }
