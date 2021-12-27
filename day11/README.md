@@ -113,3 +113,53 @@ The five lines' completion strings have total scores as follows:
 Autocomplete tools are an odd bunch: the winner is found by sorting all of the scores and then taking the middle score. (There will always be an odd number of scores to consider.) In this example, the middle score is 288957 because there are the same number of scores smaller and larger than it.
 
 Find the completion string for each incomplete line, score the completion strings, and sort the scores. What is the middle score?
+
+## --- Part Two ---
+
+It seems like the individual flashes aren't bright enough to navigate. However, you might have a better option: the flashes seem to be synchronizing!
+
+In the example above, the first time all octopuses flash simultaneously is step 195:
+
+After step 193:
+```
+5877777777
+8877777777
+7777777777
+7777777777
+7777777777
+7777777777
+7777777777
+7777777777
+7777777777
+7777777777
+```
+
+After step 194:
+```
+6988888888
+9988888888
+8888888888
+8888888888
+8888888888
+8888888888
+8888888888
+8888888888
+8888888888
+8888888888
+```
+
+After step 195:
+```
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+```
+
+If you can calculate the exact moments when the octopuses will all flash simultaneously, you should be able to navigate through the cavern. What is the first step during which all octopuses flash?

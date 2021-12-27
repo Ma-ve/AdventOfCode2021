@@ -247,13 +247,15 @@ function updateGridValue(&$grid, int $position, int $newValue = null): void {
 }
 
 foreach($inputs as $key => $input) {
-    foreach([2, 5, 10, 100] as $steps) {
+    foreach([2, 5, 10, 100, 1000] as $steps) {
         $countFlashes = 0;
 
         $grid = str_replace("\r\n", "\n", $input);
         $rowLength = strlen(trim(explode("\n", $grid)[0]));
 
         $grid = str_replace("\n", '', $grid);
+
+        $allFlashedAtStep = false;
 
         for($step = 1; $step <= $steps; $step++) {
             if(DEBUG) echo "Step {$step}, updating all values... Current grid:\n";
@@ -273,10 +275,14 @@ foreach($inputs as $key => $input) {
 
             $countFlashes += count($flashed);
 
+            if(!$allFlashedAtStep && count($flashed) === strlen($grid)) {
+                $allFlashedAtStep = $step;
+            }
+
             if(DEBUG) echo "Step {$step} done!\n";
             debug($grid, false);
         }
 
-        echo str_pad("{$key}: count flashes after {$steps} steps: ", 36) . $countFlashes . "\n";
+        echo str_pad("{$key}: count flashes after {$steps} steps: ", 36) . $countFlashes . ". They all flashed at step {$allFlashedAtStep}.\n";
     }
 }
